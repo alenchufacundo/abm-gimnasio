@@ -1,109 +1,82 @@
 import axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import useAlerts from '../hooks/useAlerts';
-// import { API_AUTH_BASEPATH } from '../../../index';
 
-export interface CustomAxiosRequestConfig<T = any>
-    extends AxiosRequestConfig<T> {
-    showSnackbar?: boolean; // Propiedad para controlar la visualización del snackbar en caso de éxito
+export interface CustomAxiosRequestConfig<T = any> extends AxiosRequestConfig<T> {
+  showSnackbar?: boolean;
 }
 
 const API_AUTH_BASEPATH = '';
 
 const instance = axios.create({
-    baseURL: API_AUTH_BASEPATH,
-    headers: {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-    },
-    withCredentials: true,
+  baseURL: API_AUTH_BASEPATH,
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
+  },
+  withCredentials: true,
 });
 
 function AxiosInterceptor({ children }: { children: ReactNode }) {
-    const {
-        actions: { openSnackbar },
-    } = useAlerts();
-    const [isSet, setIsSet] = useState(false);
+  const {
+    actions: { openSnackbar },
+  } = useAlerts();
 
-    // Obtener el mensaje de error de una respuesta
-    const getErrorMessage = (res: any): string => {
-        if (res?.data?.message) {
-            return res.data.message;
-        }
-        return 'Ha ocurrido un error inesperado.'; // Mensaje de error genérico
+  const mountedRef = useRef(false);
+  const interceptorIdRef = useRef<number | null>(null);
+
+  const getErrorMessage = (res: any): string => {
+    if (res?.data?.message) return res.data.message;
+    return 'Ha ocurrido un error inesperado.';
+  };
+
+  const handleNetworkError = (errorMessage: string) => {
+    let message = 'Error de red. Por favor, verifica tu conexión a Internet.';
+    if (errorMessage === 'Request failed with status code 0') {
+      message = 'Error de CORS. Verifica tu configuración de CORS en el servidor.';
+    }
+    openSnackbar({ message, severity: 'error' });
+  };
+
+  const handleErrorResponse = (error: AxiosError | any) => {
+    if (error.response) {
+      const message = getErrorMessage(error.response);
+      if (message) openSnackbar({ message, severity: 'error' });
+    } else {
+      handleNetworkError(error.message);
+    }
+    return Promise.reject(error);
+  };
+
+  useEffect(() => {
+    // Evitar registrar más de una vez
+    if (mountedRef.current) return;
+    mountedRef.current = true;
+
+    const resInterceptor = (response: AxiosResponse) => {
+      if (response.config.url === '/usuario') {
+        sessionStorage.setItem('usuario', response.data.data.usuario.login);
+      }
+      const config = response.config as CustomAxiosRequestConfig;
+      if (config.showSnackbar !== false && response.data?.message) {
+        openSnackbar({ message: response.data.message, severity: 'success' });
+      }
+      return response;
     };
 
-    // Manejar respuestas de error
-    const handleErrorResponse = (error: AxiosError | any) => {
-        let message;
+    const errInterceptor = (error: AxiosError) => handleErrorResponse(error);
 
-        if (error.response) {
-            const res = error.response;
+    interceptorIdRef.current = instance.interceptors.response.use(resInterceptor, errInterceptor);
 
-            // Obtener el mensaje de error
-            message = getErrorMessage(res);
-
-            if (message) {
-                openSnackbar({
-                    message,
-                    severity: 'error',
-                });
-            }
-        } else {
-            handleNetworkError(error.message);
-        }
-
-        return Promise.reject(error);
+    return () => {
+      if (interceptorIdRef.current !== null) {
+        instance.interceptors.response.eject(interceptorIdRef.current);
+      }
     };
+  }, [openSnackbar]);
 
-    // Manejar errores de red
-    const handleNetworkError = (errorMessage: string) => {
-        let message = 'Error de red. Por favor, verifica tu conexión a Internet.';
-        if (errorMessage === 'Request failed with status code 0') {
-            message =
-                'Error de CORS. Verifica tu configuración de CORS en el servidor.';
-        }
-
-        openSnackbar({
-            message,
-            severity: 'error',
-        });
-    };
-
-    useEffect(() => {
-        const resInterceptor = (response: AxiosResponse) => {
-            // Si el usuario es recuperado exitosamente
-            if (response.config.url === '/usuario') {
-                sessionStorage.setItem('usuario', response.data.data.usuario.login);
-            }
-
-            // Mostrar snackbar de éxito si showSnackbar no es false
-            const config = response.config as CustomAxiosRequestConfig; // Aseguramos el tipo
-            if (config.showSnackbar !== false && response.data.message) {
-                openSnackbar({
-                    message: response.data.message,
-                    severity: 'success',
-                });
-            }
-            return response;
-        };
-
-        const errInterceptor = (error: AxiosError) => {
-            return handleErrorResponse(error);
-        };
-
-        const responseInterceptor = instance.interceptors.response.use(
-            resInterceptor,
-            errInterceptor
-        );
-
-        setIsSet(true);
-
-        return () => instance.interceptors.response.eject(responseInterceptor);
-    }, []);
-
-    // Evitar devolver booleano en vez de ReactNode
-    return isSet ? <>{children}</> : null;
+  // Renderizamos los children inmediatamente (no bloquear render)
+  return <>{children}</>;
 }
 
 export default instance;

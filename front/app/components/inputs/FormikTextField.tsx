@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import React from "react";
+import { useTheme } from "@mui/material/styles";
 
 type FormikTextFieldProps = {
     formik: {
@@ -35,6 +36,7 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({
     ...props
 }) => {
     const [showPassword, setShowPassword] = React.useState(false);
+    const theme = useTheme();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -52,22 +54,24 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({
             helperText={formik.touched[name] && typeof formik.errors[name] === "string" ? String(formik.errors[name]) : undefined}
             sx={{
                 mb: 2,
-                bgcolor: "#f7fafd",
+                bgcolor: theme.palette.mode === "dark" ? "#181A1B" : "#f7fafd",
                 borderRadius: 2,
                 "& .MuiOutlinedInput-root": {
                     borderRadius: 2,
+                    background: theme.palette.mode === "dark" ? "#181A1B" : "#f7fafd",
+                    color: theme.palette.text.primary,
                     "& fieldset": {
-                        borderColor: "#e0e0e0",
+                        borderColor: theme.palette.mode === "dark" ? "#333" : "#e0e0e0",
                     },
                     "&:hover fieldset": {
-                        borderColor: "#1976d2",
+                        borderColor: theme.palette.primary.main,
                     },
                     "&.Mui-focused fieldset": {
-                        borderColor: "#1976d2",
+                        borderColor: theme.palette.primary.main,
                     },
                 },
                 "& .MuiInputLabel-root": {
-                    color: "#1976d2",
+                    color: theme.palette.mode === "dark" ? theme.palette.primary.light : "#1976d2",
                     fontWeight: 600,
                     fontSize: '0.95rem',
                 },

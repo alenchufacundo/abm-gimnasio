@@ -29,7 +29,7 @@ const ThemeToggle = () => {
     return (
         <ThemeIconButton onClick={toggleTheme}>
             <TablerIcon
-                icon={darkMode ? 'IconSun' : 'IconMoonStars'}
+                icon={darkMode ? 'Sun' : 'MoonStars'}
                 sx={{
                     fontSize: 24,
                 }}

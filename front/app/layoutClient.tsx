@@ -71,11 +71,11 @@ function RootLayout({ children }: any) {
   //   }
   // }, []);
 
-  useEffect(() => {
-    if (session === false && pathname !== loginPath) {
-      router.replace(loginPath);
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if (session === false && pathname !== loginPath) {
+  //     router.replace(loginPath);
+  //   }
+  // }, [session]);
 
   return (
     <>
@@ -84,12 +84,13 @@ function RootLayout({ children }: any) {
       <ThemeToggle />
       {darkMode !== undefined &&
         (session !== undefined || pathname === loginPath) &&
-        !isLoading && (
+        isLoading && (
           <>
             {/* {!pathname.startsWith('/login') && <Header />} */}
             {children}
           </>
-        )}
+        )
+        }
     </>
   );
 }

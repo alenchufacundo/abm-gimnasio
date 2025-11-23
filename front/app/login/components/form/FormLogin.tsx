@@ -79,8 +79,8 @@ const FormLogin = () => {
                     Ingresar con Google
                 </Button>
                 <Typography align="center" variant="body2">
-                    ¿No tienes cuenta?{' '}
-                    <Link href="/register" style={{ color: '#1976d2', textDecoration: 'underline' }}>
+                    ¿No tienes cuenta?
+                    <Link href="/register " style={{ color: '#1976d2', textDecoration: 'underline' }}>
                         Registrate
                     </Link>
                 </Typography>

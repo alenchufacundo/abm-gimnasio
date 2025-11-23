@@ -10,7 +10,7 @@ type MainTitleProps = {
 
 const MainTitle: React.FC<MainTitleProps> = ({ title }) => (
     <Grid size={{ xs: 12 }} mb={3}>
-        <Typography variant="h4" component="h1" align="center">
+        <Typography variant="h4" component="h1" align="center" fontWeight={600}>
             {title}
         </Typography>
     </Grid>
