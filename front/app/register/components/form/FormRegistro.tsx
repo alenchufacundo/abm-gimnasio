@@ -3,8 +3,10 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import FormikTextField from '@/app/components/inputs/FormikTextField';
+import { useRouter } from 'next/navigation';
 
 const FormRegistro = () => {
+    const router = useRouter();
     const formik = useFormik({
         initialValues: {
             empresa: '',
@@ -32,10 +34,10 @@ const FormRegistro = () => {
     return (
         <Box
             sx={{
-                maxWidth: 400,
+                maxWidth: 600,
                 mx: 'auto',
-                mt: 8,
-                p: 4,
+                mt: 4,
+                p: 2,
                 boxShadow: 3,
                 borderRadius: 2,
                 bgcolor: 'background.paper',
@@ -86,6 +88,15 @@ const FormRegistro = () => {
                     sx={{ mt: 2 }}
                 >
                     Registrarse
+                </Button>
+                <Button
+                    variant="outlined"
+                    color="secondary"
+                    fullWidth
+                    sx={{ mt: 1 }}
+                    onClick={() => router.push('/login')}
+                >
+                    Volver
                 </Button>
             </Box>
         </Box>

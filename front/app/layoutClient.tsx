@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
 // import { ChildrenProps } from './types/children';
 // import GlobalSnackbar from './components/GlobalSnackbar';
 // import GlobalLoading from './components/GlobalLoading';
-import { Provider as AlertsContextProvider } from './contexts/AlertsContext';
-import { Provider as AuthProvider } from './contexts/AuthContext';
-import { ThemeContextProvider, useThemeContext } from './contexts/ThemeContext';
-import ThemeToggle from './theme/ThemeToggle';
-import { AuthAxiosInterceptor } from './authApi/AuthApi';
-import { useEffect, useState } from 'react';
+import { Provider as AlertsContextProvider } from "./contexts/AlertsContext";
+import { Provider as AuthProvider } from "./contexts/AuthContext";
+import { ThemeContextProvider, useThemeContext } from "./contexts/ThemeContext";
+import ThemeToggle from "./theme/ThemeToggle";
+import { AuthAxiosInterceptor } from "./authApi/AuthApi";
+import { useEffect, useState } from "react";
 // import { getUserData } from './services/utils/usuario';
-import useAuth from './hooks/useAuth';
-import useAlerts from './hooks/useAlerts';
-import { usePathname, useRouter } from 'next/navigation';
+import useAuth from "./hooks/useAuth";
+import useAlerts from "./hooks/useAlerts";
+import { usePathname, useRouter } from "next/navigation";
 // import Header from './components/header/Header';
 // import { SnackbarProvider } from 'notistack';
 
 // Como trailingSlash es true en next.config, agregamos una / al final.
-const loginPath = '/login';
+const loginPath = "/login";
 
 function RootLayout({ children }: any) {
   const [isLoading, setIsLoading] = useState(true);
@@ -82,15 +82,15 @@ function RootLayout({ children }: any) {
       {/* <GlobalSnackbar /> */}
       {/* <GlobalLoading /> */}
       <ThemeToggle />
-      {darkMode !== undefined &&
+      {/* {darkMode !== undefined &&
         (session !== undefined || pathname === loginPath) &&
-        isLoading && (
-          <>
-            {/* {!pathname.startsWith('/login') && <Header />} */}
-            {children}
-          </>
-        )
-        }
+        isLoading && ( */}
+      <>
+        {/* {!pathname.startsWith('/login') && <Header />} */}
+        {children}
+      </>
+      {/* ) */}
+      {/* } */}
     </>
   );
 }
@@ -103,8 +103,8 @@ export default function LayoutClient({ children }: any) {
           <AuthAxiosInterceptor>
             {/* <ApiInterceptor> */}
             {/* <SnackbarProvider autoHideDuration={3000}> */}
-              <RootLayout>{children}</RootLayout>
-              {/* </ApiInterceptor> */}
+            <RootLayout>{children}</RootLayout>
+            {/* </ApiInterceptor> */}
             {/* </SnackbarProvider> */}
           </AuthAxiosInterceptor>
         </AuthProvider>

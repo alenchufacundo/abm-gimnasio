@@ -29,8 +29,8 @@ const FormLogin = () => {
             sx={{
                 maxWidth: 400,
                 mx: 'auto',
-                mt: 8,
-                p: 4,
+                mt: 4,
+                p: 2,
                 boxShadow: 3,
                 borderRadius: 2,
                 bgcolor: 'background.paper',
